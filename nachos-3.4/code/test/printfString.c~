@@ -1,0 +1,6 @@
+#include "syscall.h"
+int main()
+{
+	Printf("Thanh Huong\n");
+	return 0;
+}

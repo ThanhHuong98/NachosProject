@@ -1,0 +1,7 @@
+#include "syscall.h"
+
+int main()
+{
+	CreateFile("ThanhHuong.txt");
+	return 0;
+}
