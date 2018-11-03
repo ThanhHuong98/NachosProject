@@ -54,8 +54,8 @@ void IncreasePC()
 {
 	int counter = machine->ReadRegister(PCReg);
    	machine->WriteRegister(PrevPCReg, counter);
-    	counter = machine->ReadRegister(NextPCReg);
-    	machine->WriteRegister(PCReg, counter);
+    counter = machine->ReadRegister(NextPCReg);
+    machine->WriteRegister(PCReg, counter);
    	machine->WriteRegister(NextPCReg, counter + 4);
 }
 // Input: Khong gian dia chi User(int) - gioi han cua buffer(int)
@@ -245,13 +245,13 @@ void ExceptionHandler(ExceptionType which)
 		{
 		 int type;
  		 //Lay tham so ten tap tin tu thanh ghi r4
-		 virtAddr =  machine -> ReadRegister(4);
+		 int virtAddr =  machine -> ReadRegister(4);
 		 //lay tham so type tu thanh ghi r5
 	  	 type = machine -> ReadRegister(5);
 
 		 DEBUG('a', "\n Reading filename.");
 		 //MaxFileLength = 32
-		 filename = User2System(virtAddr, MaxFileLength+1);
+		char* filename = User2System(virtAddr, MaxFileLength+1);
 		
 		 if(fileSystem -> index >=0 && fileSystem -> index <=9)
    		 {
@@ -275,7 +275,25 @@ void ExceptionHandler(ExceptionType which)
 		 delete[] filename;
 		 break;
 		}
-
+		case SC_Close:
+		{
+			/*void Close(OpenFileId id)
+			 *Input: File id
+			 * Output: 0 thanh cong, -1 that bai*/
+			int fileID = machine->ReadRegister(4);
+			if(fileID >=0 && fileID <=9)
+			{
+				if(fileSystem->openf[fileID] != NULL)
+				{
+					delete fileSystem->openf[fileID];
+					fileSystem->openf[fileID] = NULL;
+					machine->WriteRegister(2, 0);
+					break;
+				}
+			}
+			machine->WriteRegister(2, -1);
+			break;
+		}
 		case SC_Write:
 		{
 		 //Input: buffer(char*), so ky tu (int), id cua file(OpenFileId)
@@ -286,7 +304,7 @@ void ExceptionHandler(ExceptionType which)
 		 int oldPos;
 		 int newPos;
 		 char* buf;
-		 virtAddr = machine -> ReadRegister(4); //lay dia chi cua tham so buffer
+		 int virtAddr = machine -> ReadRegister(4); //lay dia chi cua tham so buffer
 		 charCount = machine -> ReadRegister(5); //lay charCount
 		 id = machine -> ReadRegister(6); //Lay id cua file
 		
