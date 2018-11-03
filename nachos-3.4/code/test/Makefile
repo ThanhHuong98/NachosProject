@@ -66,11 +66,6 @@ matmult: matmult.o start.o
 	$(LD) $(LDFLAGS) start.o matmult.o -o matmult.coff
 	../bin/coff2noff matmult.coff matmult
 
-createFile.o: createFile.c
-	$(CC) $(CFLAGS) -c createFile.c
-createFile: createFile.o start.o
-	$(LD) $(LDFLAGS) start.o createFile.o -o createFile.coff
-	../bin/coff2noff createFile.coff createFile
 printf.o: printf.c
 	$(CC) $(CFLAGS) -c printf.c
 printf: printf.o start.o
