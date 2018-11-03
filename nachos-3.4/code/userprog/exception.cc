@@ -292,6 +292,44 @@ void ExceptionHandler(ExceptionType which)
 				}
 			}
 			machine->WriteRegister(2, -1);
+			IncreasePC();
+			break;
+		}
+		case SC_Read:
+		{
+			/* int Read(char *buffer, int size, OpenFileId id);
+			 * Input: buffer - chuoi tra ve, size - kich thuoc chuoi, id - id file
+			 * Output: so ky tu tra ve - thanh cong, -1 - that bai*/
+			int virtualAddr = machine->ReadRegister(4);
+			int size = machine->ReadRegister(5);
+			int fileID = machine->ReadRegister(6);
+			char* buf;
+			int prevPos, CurrPos;
+			int realSize;
+			// Lay vi tri con tro hien tai
+			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
+			if(fileSystem->openf[fileID]->type == 2)
+			{
+				realSize = gSynchConsole->Read(buf, size);
+				System2User(virtualAddr, realSize, buf);
+				machine->WriteRegister(2, realSize);
+				delete buf;
+				IncreasePC();
+				return;
+			}
+			else {
+				if((fileSystem->openf[fileID]->Read(buf, size)) > 0) {
+					CurrPos = fileSystem->openf[fileID]->GetCurrentPos();
+					realSize = CurrPos - prevPos;
+					System2User(virtualAddr, realSize, buf);
+					machine->WriteRegister(2, realSize);
+				} else {
+					machine->WriteRegister(2, -1);
+				}
+			}
+			delete buf;
+			IncreasePC();
+			return;
 			break;
 		}
 		case SC_Write:
