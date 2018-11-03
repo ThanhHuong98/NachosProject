@@ -183,9 +183,8 @@ void ExceptionHandler(ExceptionType which)
 				printf("\n File name is not valid");
 				DEBUG('a', "\n File name is not valid");
 				machine->WriteRegister(2, -1); //Return -1 vao thanh ghi R2
-				//IncreasePC();
-				//return;
-				break;
+				IncreasePC();
+				return;
 			}
 
 			if (filename == NULL)  //Neu khong doc duoc
@@ -194,9 +193,9 @@ void ExceptionHandler(ExceptionType which)
 				DEBUG('a', "\n Not enough memory in system");
 				machine->WriteRegister(2, -1); //Return -1 vao thanh ghi R2
 				delete filename;
-				//IncreasePC();
-				//return;
-				break;
+				IncreasePC();
+				return;
+				//break;
 			}
 			DEBUG('a', "\n Finish reading filename.");
 
@@ -206,17 +205,17 @@ void ExceptionHandler(ExceptionType which)
 				printf("\n Error create file '%s'", filename);
 				machine->WriteRegister(2, -1);
 				delete filename;
-				//IncreasePC();
-				//return;
-				break;
+				IncreasePC();
+				return;
+				//break;
 			}
 
 			//Tao file thanh cong
 			machine->WriteRegister(2, 0);
 			delete filename;
-			//IncreasePC(); //Day thanh ghi lui ve sau de tiep tuc ghi
-			//return;
-			break;
+			IncreasePC(); //Day thanh ghi lui ve sau de tiep tuc ghi
+			return;
+			//break;
 		}
 		case SC_PrintString:
 		{
@@ -236,9 +235,9 @@ void ExceptionHandler(ExceptionType which)
 			//Returns the number of bytes written
 			gSynchConsole->Write(buffer, length + 1); // Goi ham Write cua SynchConsole de in chuoi
 			delete buffer; 
-			//IncreasePC(); // Tang Program Counter 
-			//return;
-			break;
+			IncreasePC(); // Tang Program Counter 
+			return;
+			//break;
 		}
 
 		case SC_Open:
@@ -268,11 +267,15 @@ void ExceptionHandler(ExceptionType which)
 			}
 		     else
 			   machine -> WriteRegister(2, 1);
-		     delete[] filename;
-		     break;
+		    delete[] filename;
+			IncreasePC();
+		 	return;
+		    break;
 		 }
 		 machine -> WriteRegister(2, -1);
 		 delete[] filename;
+		 IncreasePC();
+		 return;
 		 break;
 		}
 		case SC_Close:
@@ -293,6 +296,7 @@ void ExceptionHandler(ExceptionType which)
 			}
 			machine->WriteRegister(2, -1);
 			IncreasePC();
+			return;
 			break;
 		}
 		case SC_Read:
@@ -351,6 +355,7 @@ void ExceptionHandler(ExceptionType which)
 		 {
 		   printf("\nKhong the ghi file vi id cua file nam ngoai bang mo ta");
 		   machine -> WriteRegister(2, -1);
+		   IncreasePC();
 		   return;
 		 }
 		 //Kiem tra file co ton tai khong
@@ -358,6 +363,7 @@ void ExceptionHandler(ExceptionType which)
 		 {
 		   printf("File khong ton tai");
 		   machine -> WriteRegister(2, -1);
+		   IncreasePC();
 		   return;
 		 }
 		 //Xet truong hop ghi file only read (type=1) hoac file stdin (type=2) thi tra ve -1
@@ -365,6 +371,7 @@ void ExceptionHandler(ExceptionType which)
 		 {
 		   printf("\nKhong the ghi file chi doc hoac stdin");
 		   machine->WriteRegister(2, -1);
+		   IncreasePC();
 		   return;
 		 }
 		 oldPos = fileSystem -> openf[id] -> GetCurrentPos(); //kiem tra thanh cong thi lay old possition
@@ -378,6 +385,7 @@ void ExceptionHandler(ExceptionType which)
 			newPos = fileSystem -> openf[id] -> GetCurrentPos();
 			machine -> WriteRegister(2, newPos - oldPos);
 			delete buf;
+			IncreasePC();
 			return;
 		   }
 		 }
@@ -394,6 +402,7 @@ void ExceptionHandler(ExceptionType which)
 		   gSynchConsole->Write(buf+i, 1);
 		   machine->WriteRegister(2, i-1);
 		   delete buf;
+		   IncreasePC();
 		   return;
 		 }
 		}
