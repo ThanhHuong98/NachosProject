@@ -380,7 +380,7 @@ void ExceptionHandler(ExceptionType which)
 		 //Kiem tra file co ton tai khong
 		 if(fileSystem -> openf[id] == NULL)
 		 {
-		   printf("File khong ton tai");
+		   printf("\nFile khong ton tai");
 		   machine -> WriteRegister(2, -1);
 		   IncreasePC();
 		   return;
