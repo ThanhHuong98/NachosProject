@@ -310,6 +310,25 @@ void ExceptionHandler(ExceptionType which)
 			char* buf;
 			int prevPos, CurrPos;
 			int realSize;
+			// Kiem tra hop le
+			if (fileID < 0 || fileID > 9) {
+				printf("File nam ngoai bang mo ta.\n");
+				machine->WriteRegister(2, -1);
+				IncreasePC();
+				return;
+			}
+			if (fileSystem->openf[fileID] == NULL) {
+				printf("File chua duoc mo.\n");
+				machine->WriteRegister(2, -1);
+				IncreasePC();
+				return;
+			}
+			if (fileSystem->openf[fileID]->type == 3) {
+				printf("Khong the doc file.\n");
+				machine->WriteRegister(2, -1);
+				IncreasePC();
+				return;
+			}
 			// Lay vi tri con tro hien tai
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			if(fileSystem->openf[fileID]->type == 2)
