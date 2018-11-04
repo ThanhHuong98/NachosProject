@@ -73,6 +73,6 @@ printf: printf.o start.o
 	../bin/coff2noff printf.coff printf
 echo.o: echo.c
 	$(CC) $(CFLAGS) -c echo.c
-echo: matmult.o start.o
+echo: echo.o start.o
 	$(LD) $(LDFLAGS) start.o echo.o -o echo.coff
 	../bin/coff2noff echo.coff echo
