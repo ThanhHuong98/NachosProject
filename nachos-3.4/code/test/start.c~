@@ -130,13 +130,30 @@ Yield:
 	j	$31
 	.end Yield
 
-	.globl Printf
-	.ent	Printf
-Printf:
-	addiu $2,$0,SC_Printf
+
+	.globl ReadString
+	.ent	ReadString
+ReadString:
+	addiu $2,$0,SC_ReadString
 	syscall
 	j	$31
-	.end Printf
+	.end ReadString
+
+	.globl PrintString
+	.ent	PrintString
+PrintString:
+	addiu $2,$0,SC_PrintString
+	syscall
+	j	$31
+	.end PrintString
+
+	.globl PrintChar
+	.ent	PrintChar
+PrintChar:
+	addiu $2,$0,SC_PrintChar
+	syscall
+	j	$31
+	.end PrintChar
 
 
 /* dummy function to keep gcc happy */

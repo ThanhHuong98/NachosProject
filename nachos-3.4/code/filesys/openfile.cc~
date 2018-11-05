@@ -36,7 +36,6 @@ OpenFile::OpenFile(int sector)
 //Cai dat ham dung OpenFile voi them tham so type
 OpenFile::OpenFile(int sector, int _type)
 {
-	int type;
 	hdr = new FileHeader;
 	hdr->FetchFrom(sector);
 	seekPosition = 0;

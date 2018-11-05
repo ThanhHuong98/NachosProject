@@ -54,8 +54,8 @@ void IncreasePC()
 {
 	int counter = machine->ReadRegister(PCReg);
    	machine->WriteRegister(PrevPCReg, counter);
-    counter = machine->ReadRegister(NextPCReg);
-    machine->WriteRegister(PCReg, counter);
+    	counter = machine->ReadRegister(NextPCReg);
+    	machine->WriteRegister(PCReg, counter);
    	machine->WriteRegister(NextPCReg, counter + 4);
 }
 // Input: Khong gian dia chi User(int) - gioi han cua buffer(int)
@@ -217,6 +217,34 @@ void ExceptionHandler(ExceptionType which)
 			return;
 			//break;
 		}
+		case SC_ReadString:
+		{
+			// Input: Buffer(char*), do dai toi da cua chuoi nhap vao(int)
+			// Output: Khong co
+			// Cong dung: Doc vao mot chuoi voi tham so la buffer va do dai toi da
+			int virtAddr, length;
+			char* buffer;
+			virtAddr = machine->ReadRegister(4); // Lay dia chi tham so buffer truyen vao tu thanh ghi so 4
+			length = machine->ReadRegister(5); // Lay do dai toi da cua chuoi nhap vao tu thanh ghi so 5
+			buffer = User2System(virtAddr, length); // Copy chuoi tu vung nho User Space sang System Space
+			gSynchConsole->Read(buffer, length); // Goi ham Read cua SynchConsole de doc chuoi
+			System2User(virtAddr, length, buffer); // Copy chuoi tu vung nho System Space sang vung nho User Space
+			delete buffer; 
+			IncreasePC(); // Tang Program Counter 
+			return;
+			//break;
+		}
+		case SC_PrintChar:
+		{
+			// Input: Ki tu(char)
+			// Output: Ki tu(char)
+			// Cong dung: Xuat mot ki tu la tham so arg ra man hinh
+			char c = (char)machine->ReadRegister(4); // Doc ki tu tu thanh ghi r4
+			gSynchConsole->Write(&c, 1); // In ky tu tu bien c, 1 byte
+			//IncreasePC();
+			break;
+		}
+
 		case SC_PrintString:
 		{
 			//void String(char*buffer)
@@ -240,44 +268,48 @@ void ExceptionHandler(ExceptionType which)
 			//break;
 		}
 
-		case SC_Open:
+	case SC_Open:
 		{
-		 int type;
- 		 //Lay tham so ten tap tin tu thanh ghi r4
-		 int virtAddr =  machine -> ReadRegister(4);
-		 //lay tham so type tu thanh ghi r5
-	  	 type = machine -> ReadRegister(5);
-
-		 DEBUG('a', "\n Reading filename.");
-		 //MaxFileLength = 32
-		char* filename = User2System(virtAddr, MaxFileLength+1);
+			//OpenFileID Open(char *name, int type)
+			// Input: arg1: Dia chi cua chuoi name, arg2: type
+			// Output: Tra ve OpenFileID neu thanh công, -1 neu loi
+			// Chuc nang: Tra ve ID cua file.
+			int virtAddr = machine->ReadRegister(4); // Lay dia chi cua tham so name tu thanh ghi so 4
+			int type = machine->ReadRegister(5); // Lay tham so type tu thanh ghi so 5
+			char* filename;
+			filename = User2System(virtAddr, MaxFileLength); // Copy chuoi tu vung nho User Space sang System Space voi bo dem name dai MaxFileLength
+			//Kiem tra xem OS con mo dc file khong
 		
-		 if(fileSystem -> index >=0 && fileSystem -> index <=9)
-   		 {
-		     if(type==0 || type==1)
+			int freeSlot = fileSystem->FindFreeSlot();//Tim nhung slot con NULL tren bang mo ta file
+			if (freeSlot != -1) //Chi xu li khi con slot trong
 			{
-			   if((fileSystem -> openf[fileSystem->index] = fileSystem -> Open(filename, type)) != NULL)
-			      {
-				machine -> WriteRegister(2, fileSystem -> index - 1);
-    			      }
+				if (type == 0 || type == 1) //chi xu li khi type = 0 hoac 1
+				{
+					
+					if ((fileSystem->openf[freeSlot] = fileSystem->Open(filename, type)) != NULL) //Mo file thanh cong
+					{
+						machine->WriteRegister(2, freeSlot); //tra ve OpenFileID
+					}
+				}
+				else if (type == 2) // xu li stdin voi type quy uoc la 2
+				{
+					machine->WriteRegister(2, 0); //tra ve OpenFileID
+				}
+				else // xu li stdout voi type quy uoc la 3
+				{
+					machine->WriteRegister(2, 1); //tra ve OpenFileID
+				}
+				delete[] filename;
+				//IncreasePC();
+				break;
 			}
-		     else if(type==2)
-			{
-			   machine -> WriteRegister(2, 0);
-			}
-		     else
-			   machine -> WriteRegister(2, 1);
-		    delete[] filename;
-			IncreasePC();
-		 	return;
-		    break;
-		 }
-		 machine -> WriteRegister(2, -1);
-		 delete[] filename;
-		 IncreasePC();
-		 return;
-		 break;
+			machine->WriteRegister(2, -1); //Khong mo duoc file return -1
+			
+			delete[] filename;
+			//IncreasePC();
+			break;
 		}
+
 		case SC_Close:
 		{
 			/*void Close(OpenFileId id)
@@ -301,6 +333,21 @@ void ExceptionHandler(ExceptionType which)
 		}
 		case SC_Read:
 		{
+<<<<<<< HEAD
+			// Input: buffer(char*), so ky tu(int), id cua file(OpenFileID)
+			// Output: -1: Loi, So byte read thuc su: Thanh cong, -2: Thanh cong
+			// Cong dung: Doc file voi tham so la buffer, so ky tu cho phep va id cua file
+			int virtAddr = machine->ReadRegister(4); // Lay dia chi cua tham so buffer tu thanh ghi so 4
+			int charcount = machine->ReadRegister(5); // Lay charcount tu thanh ghi so 5
+			int id = machine->ReadRegister(6); // Lay id cua file tu thanh ghi so 6 
+			int OldPos;
+			int NewPos;
+			char *buf;
+			// Kiem tra id cua file truyen vao co nam ngoai bang mo ta file khong
+			if (id < 0 || id > 10)
+			{
+				printf("\nKhong the read vi id nam ngoai bang mo ta file.");
+=======
 			/* int Read(char *buffer, int size, OpenFileId id);
 			 * Input: buffer - chuoi tra ve, size - kich thuoc chuoi, id - id file
 			 * Output: so ky tu tra ve - thanh cong, -1 - that ba
@@ -317,16 +364,27 @@ void ExceptionHandler(ExceptionType which)
 			// Kiem tra hop le
 			if (fileID < 0 || fileID > 9) {
 				printf("File nam ngoai bang mo ta.\n");
+>>>>>>> c202601718197780ee93b91d1a8aa9a3efc2a576
 				machine->WriteRegister(2, -1);
 				IncreasePC();
 				return;
 			}
+<<<<<<< HEAD
+			// Kiem tra file co ton tai khong
+			if (fileSystem->openf[id] == NULL)
+			{
+				printf("\nKhong the read vi file nay khong ton tai.");
+=======
 			if (fileSystem->openf[fileID] == NULL) {
 				printf("File chua duoc mo.\n");
+>>>>>>> c202601718197780ee93b91d1a8aa9a3efc2a576
 				machine->WriteRegister(2, -1);
 				IncreasePC();
 				return;
 			}
+<<<<<<< HEAD
+			if (fileSystem->openf[id]->type == 3) // Xet truong hop doc file stdout (type quy uoc la 3) thi tra ve -1
+=======
 			if (fileSystem->openf[fileID]->type == 3) {
 				printf("Khong the doc file.\n");
 				machine->WriteRegister(2, -1);
@@ -337,28 +395,44 @@ void ExceptionHandler(ExceptionType which)
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			
 			if(fileSystem->openf[fileID]->type == 2)
+>>>>>>> c202601718197780ee93b91d1a8aa9a3efc2a576
 			{
-				realSize = gSynchConsole->Read(buf, size);
-				System2User(virtualAddr, realSize, buf);
-				machine->WriteRegister(2, realSize);
+				printf("\nKhong the read file stdout.");
+				machine->WriteRegister(2, -1);
+				IncreasePC();
+				return;
+			}
+			OldPos = fileSystem->openf[id]->GetCurrentPos(); // Kiem tra thanh cong thi lay vi tri OldPos
+			buf = User2System(virtAddr, charcount); // Copy chuoi tu vung nho User Space sang System Space voi bo dem buffer dai charcount
+			// Xet truong hop doc file stdin (type quy uoc la 2)
+			if (fileSystem->openf[id]->type == 2)
+			{
+				// Su dung ham Read cua lop SynchConsole de tra ve so byte thuc su doc duoc
+				int size = gSynchConsole->Read(buf, charcount); 
+				System2User(virtAddr, size, buf); // Copy chuoi tu vung nho System Space sang User Space voi bo dem buffer co do dai la so byte thuc su
+				machine->WriteRegister(2, size); // Tra ve so byte thuc su doc duoc
 				delete buf;
 				IncreasePC();
 				return;
 			}
-			else {
-				if((fileSystem->openf[fileID]->Read(buf, size)) > 0) {
-					CurrPos = fileSystem->openf[fileID]->GetCurrentPos();
-					realSize = CurrPos - prevPos;
-					System2User(virtualAddr, realSize, buf);
-					machine->WriteRegister(2, realSize);
-				} else {
-					machine->WriteRegister(2, -1);
-				}
+			// Xet truong hop doc file binh thuong thi tra ve so byte thuc su
+			if ((fileSystem->openf[id]->Read(buf, charcount)) > 0)
+			{
+				// So byte thuc su = NewPos - OldPos
+				NewPos = fileSystem->openf[id]->GetCurrentPos();
+				// Copy chuoi tu vung nho System Space sang User Space voi bo dem buffer co do dai la so byte thuc su 
+				System2User(virtAddr, NewPos - OldPos, buf); 
+				machine->WriteRegister(2, NewPos - OldPos);
+			}
+			else
+			{
+				// Truong hop con lai la doc file co noi dung la NULL tra ve -2
+				//printf("\nDoc file rong.");
+				machine->WriteRegister(2, -2);
 			}
 			delete buf;
 			IncreasePC();
 			return;
-			break;
 		}
 		case SC_Write:
 		{

@@ -230,7 +230,8 @@ int FileSystem::FindFreeSlot()
 {
 	for(int i = 2; i < 10; i++)
 	{
-		if(openf[i] == NULL) return i;		
+		if(openf[i] == NULL) 
+		return i;		
 	}
 	return -1;
 }
