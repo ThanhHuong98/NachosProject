@@ -340,7 +340,6 @@ void ExceptionHandler(ExceptionType which)
 			 * Type = 1: Read Only
 			 * Type = 2: stdin
 			 * Type = 3: stdout*/
-			printf("Entry Read");
 			int virtualAddr = machine->ReadRegister(4);
 			int size = machine->ReadRegister(5);
 			int fileID = machine->ReadRegister(6);
@@ -348,7 +347,6 @@ void ExceptionHandler(ExceptionType which)
 			int prevPos, CurrPos;
 			int realSize;
 			// Kiem tra hop le
-			printf("Flag");
 			if (fileID < 0 || fileID > 9) {
 				printf("File nam ngoai bang mo ta.\n");
 				machine->WriteRegister(2, -1);
@@ -369,22 +367,27 @@ void ExceptionHandler(ExceptionType which)
 			}
 			// Lay vi tri con tro hien tai
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
-			
+			buf = User2System(virtualAddr, size);
 			// Xet truong hop doc file binh thuong thi tra ve so byte thuc su
 			if ((fileSystem->openf[fileID]->Read(buf, size)) > 0)
 			{
-				// So byte thuc su = NewPos - OldPos
 				CurrPos = fileSystem->openf[fileID]->GetCurrentPos();
 				realSize = CurrPos - prevPos;
 				// Copy chuoi tu vung nho System Space sang User Space voi bo dem buffer co do dai la so byte thuc su 
-				System2User(virtualAddr, realSize, buf);	 
+				System2User(virtualAddr, realSize + 1, buf); 
 				machine->WriteRegister(2, realSize);
+				delete buf;
+				IncreasePC();
+				return;
 			}
 			else
 			{
 				// Truong hop con lai la doc file co noi dung la NULL tra ve -2
 				//printf("\nDoc file rong.");
 				machine->WriteRegister(2, -2);
+				delete buf;
+				IncreasePC();
+				return;
 			}
 			delete buf;
 			IncreasePC();
