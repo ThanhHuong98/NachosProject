@@ -228,7 +228,7 @@ FileSystem::Create(char *name, int initialSize)
 //Ham tim slot trong
 int FileSystem::FindFreeSlot()
 {
-	for(int i = 2; i < 15; i++)
+	for(int i = 2; i < 10; i++)
 	{
 		if(openf[i] == NULL) return i;		
 	}

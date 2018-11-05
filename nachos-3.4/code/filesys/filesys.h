@@ -74,7 +74,8 @@ class FileSystem // la 1 OpenFile mang 2 chieu: 10luong file, moi luong co 1 idF
 		delete[] openf;
 	}
 
-    bool Create(char *name, int initialSize) { 
+    bool Create(char *name, int initialSize) 
+	{ 
 	int fileDescriptor = OpenForWrite(name);
 
 	if (fileDescriptor == -1) return FALSE;
