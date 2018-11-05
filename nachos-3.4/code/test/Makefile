@@ -71,7 +71,6 @@ printf.o: printf.c
 printf: printf.o start.o
 	$(LD) $(LDFLAGS) start.o printf.o -o printf.coff
 	../bin/coff2noff printf.coff printf
-<<<<<<< HEAD
 createfile.o: createfile.c
 	$(CC) $(CFLAGS) -c createfile.c
 createfile: createfile.o start.o
@@ -82,15 +81,8 @@ cat.o: cat.c
 cat: cat.o start.o
 	$(LD) $(LDFLAGS) start.o cat.o -o cat.coff
 	../bin/coff2noff cat.coff cat
-=======
-#echo.o: echo.c
-#	$(CC) $(CFLAGS) -c echo.c
-#echo: echo.o start.o
-#	$(LD) $(LDFLAGS) start.o echo.o -o echo.coff
-#	../bin/coff2noff echo.coff echo
 copy.o: copy.c
 	$(CC) $(CFLAGS) -c copy.c
 copy: copy.o start.o
 	$(LD) $(LDFLAGS) start.o copy.o -o copy.coff
 	../bin/coff2noff copy.coff copy
->>>>>>> c202601718197780ee93b91d1a8aa9a3efc2a576

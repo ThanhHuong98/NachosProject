@@ -340,6 +340,7 @@ void ExceptionHandler(ExceptionType which)
 			 * Type = 1: Read Only
 			 * Type = 2: stdin
 			 * Type = 3: stdout*/
+			printf("Entry Read");
 			int virtualAddr = machine->ReadRegister(4);
 			int size = machine->ReadRegister(5);
 			int fileID = machine->ReadRegister(6);
@@ -347,6 +348,7 @@ void ExceptionHandler(ExceptionType which)
 			int prevPos, CurrPos;
 			int realSize;
 			// Kiem tra hop le
+			printf("Flag");
 			if (fileID < 0 || fileID > 9) {
 				printf("File nam ngoai bang mo ta.\n");
 				machine->WriteRegister(2, -1);
@@ -368,13 +370,6 @@ void ExceptionHandler(ExceptionType which)
 			// Lay vi tri con tro hien tai
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			
-			if(fileSystem->openf[fileID]->type == 2)
-			{
-				printf("\nKhong the read file stdout.");
-				machine->WriteRegister(2, -1);
-				IncreasePC();
-				return;
-			}
 			// Xet truong hop doc file binh thuong thi tra ve so byte thuc su
 			if ((fileSystem->openf[fileID]->Read(buf, size)) > 0)
 			{

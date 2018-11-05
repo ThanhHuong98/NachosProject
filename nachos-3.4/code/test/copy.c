@@ -4,14 +4,12 @@
 int main(int argc, char const *argv[])
 {
     char* buf;
-    int size;
-    int srcFile = Open("myFile.txt", 1);
-    int desFile = CreateFile("neww.txt");
-   do {
-       size = Read(buf, 255, srcFile);
-       if (size = -1) break;
-       Write(buf, size, desFile);
-   } while (TRUE);
-    PrintString(buf);
+    int size = 255;
+    int srcFile = Open("myFile.txt", 0);
+    int desFile = CreateFile("newww.txt");
+    PrintChar('m');
+    Read(buf, size, srcFile);
+    Halt();
+
     return 0;
 }
