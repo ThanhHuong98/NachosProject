@@ -1,10 +1,5 @@
-﻿
-#include "copyright.h"
-#include "syscall.h"
-
+﻿#include "syscall.h"
 #define MAX 255
-
-
 
 int main()
 
@@ -36,7 +31,7 @@ int main()
 		{
 			PrintString("\nDoc file thanh cong!");
 
-/*			stdout = Open("stdout", 3); //mở stdout, type quy định ban đầu là 3
+			stdout = Open("stdout", 3); //mở stdout, type quy định ban đầu là 3
 
 			if(stdout == -1) //mở khong thành công
 
@@ -47,13 +42,10 @@ int main()
 			{
 
 				Write(buf, length, stdout);
-
 				Close(stdout);
-
-			}*/
+			}
 
 		}
-
 		Close(stdin);
 
 	}
