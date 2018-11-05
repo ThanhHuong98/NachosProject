@@ -129,7 +129,7 @@ void ExceptionHandler(ExceptionType which)
 
 	case AddressErrorException:
 		DEBUG('a', "\n Unaligned reference or one that was beyond the end of the address space");
-		printf("\n\n Unaligned reference or one that was beyond the end of the address space");
+		printf("Unaligned reference or one that was beyond the end of the address space\n");
 		interrupt->Halt();
 		break;
 
@@ -303,7 +303,11 @@ void ExceptionHandler(ExceptionType which)
 		{
 			/* int Read(char *buffer, int size, OpenFileId id);
 			 * Input: buffer - chuoi tra ve, size - kich thuoc chuoi, id - id file
-			 * Output: so ky tu tra ve - thanh cong, -1 - that bai*/
+			 * Output: so ky tu tra ve - thanh cong, -1 - that ba
+			 * Type = 0 : Read Write
+			 * Type = 1: Read Only
+			 * Type = 2: stdin
+			 * Type = 3: stdout*/
 			int virtualAddr = machine->ReadRegister(4);
 			int size = machine->ReadRegister(5);
 			int fileID = machine->ReadRegister(6);
@@ -331,6 +335,7 @@ void ExceptionHandler(ExceptionType which)
 			}
 			// Lay vi tri con tro hien tai
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
+			
 			if(fileSystem->openf[fileID]->type == 2)
 			{
 				realSize = gSynchConsole->Read(buf, size);
