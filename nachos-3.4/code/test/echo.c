@@ -2,7 +2,6 @@
 #define MAX 255
 
 int main()
-
 {
 	int stdin;
 	int stdout;
