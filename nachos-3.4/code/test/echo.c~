@@ -19,7 +19,8 @@ int main()
 		if(length !=-1 && length!=-2) //kiểm tra xem đọc file có bị lỗi hoặc đã đến cuối file chưa?
 
 		{
-			PrintString("\n-> Du lieu da nhap: ");
+			PrintString("\nDoc file thanh cong!");
+
 			stdout = Open("stdout", 3); //mở stdout, type quy định ban đầu là 3
 
 			if(stdout != -1) //mở khong thành công

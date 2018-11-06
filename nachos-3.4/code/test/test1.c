@@ -1,21 +1,14 @@
-/*#include"syscall.h"
-int main()
-{
-	PrintString("Thanh Huong Nguyen");
-	return 0;
-}*/
 #include"syscall.h"
 #include"copyright.h"
 int main()
 {
-	char buffer[256];
+	char buffer[255];
 	char str[256];
 	int f;
 	int len;
 
 	PrintString("file name = ");
 	ReadString(str,256);
-
 	f=Open(str,1);
 
 	if(f==-1)
@@ -24,7 +17,7 @@ int main()
 	}
 	else
 	{
-		 len = Read(buffer, 256, f);
+		 len = Read(buffer, 255, f);
 		if(len==-1 | len ==-2)
 		{
 			PrintString("Fail..\n");	

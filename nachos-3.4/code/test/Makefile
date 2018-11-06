@@ -35,7 +35,7 @@ CPP = gcc -E
 INCDIR =-I../userprog -I../threads
 CFLAGS = -G 0 -c $(INCDIR)
 
-all: halt shell matmult sort printf copy cat
+all: halt shell matmult sort createfile cat echo
 
 start.o: start.s ../userprog/syscall.h
 	$(CPP) $(CPPFLAGS) start.c > strt.s
@@ -71,25 +71,20 @@ printf.o: printf.c
 printf: printf.o start.o
 	$(LD) $(LDFLAGS) start.o printf.o -o printf.coff
 	../bin/coff2noff printf.coff printf
-
 createfile.o: createfile.c
 	$(CC) $(CFLAGS) -c createfile.c
 createfile: createfile.o start.o
 	$(LD) $(LDFLAGS) start.o createfile.o -o createfile.coff
 	../bin/coff2noff createfile.coff createfile
-	
 cat.o: cat.c
 	$(CC) $(CFLAGS) -c cat.c
 cat: cat.o start.o
 	$(LD) $(LDFLAGS) start.o cat.o -o cat.coff
 	../bin/coff2noff cat.coff cat
-#echo.o: echo.c
-#	$(CC) $(CFLAGS) -c echo.c
-#echo: echo.o start.o
-#	$(LD) $(LDFLAGS) start.o echo.o -o echo.coff
-#	../bin/coff2noff echo.coff echo
-copy.o: copy.c
-	$(CC) $(CFLAGS) -c copy.c
-copy: copy.o start.o
-	$(LD) $(LDFLAGS) start.o copy.o -o copy.coff
-	../bin/coff2noff copy.coff copy
+echo.o: echo.c
+	$(CC) $(CFLAGS) -c echo.c
+echo: echo.o start.o
+	$(LD) $(LDFLAGS) start.o echo.o -o echo.coff
+	../bin/coff2noff echo.coff echo
+
+

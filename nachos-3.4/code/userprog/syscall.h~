@@ -128,6 +128,7 @@ void Fork(void (*func)());
  */
 void Yield();		
 
+void PrintChar(char c);
 void PrintString(char*buffer);
 void ReadString(char*buffer, int length);
 int Seek(int pos, OpenFileId id);
