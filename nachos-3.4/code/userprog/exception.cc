@@ -368,6 +368,17 @@ void ExceptionHandler(ExceptionType which)
 			// Lay vi tri con tro hien tai
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			buf = User2System(virtualAddr, size);
+			// Sdtin
+			
+			if (fileSystem->openf[fileID]->type == 2) {
+				realSize = gSynchConsole->Read(buf, size);
+				System2User(virtualAddr, realSize + 1, buf); 
+				machine->WriteRegister(2, realSize);
+				delete buf;
+				IncreasePC();
+				return;
+			}
+			
 			// Xet truong hop doc file binh thuong thi tra ve so byte thuc su
 			if ((fileSystem->openf[fileID]->Read(buf, size)) > 0)
 			{
