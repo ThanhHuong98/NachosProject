@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
     CreateFile(filename_out);
    
     desFile = Open(filename_out, 0);
-
+    PrintString("finish opening file\n");
     size = Read(buf, size, srcFile);
     PrintString(buf);
     Write(buf, size, desFile);

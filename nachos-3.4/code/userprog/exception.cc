@@ -368,7 +368,6 @@ void ExceptionHandler(ExceptionType which)
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			buf = User2System(virtualAddr, size);
 
-			
 			if (fileSystem->openf[fileID]->type == 2) {
 				int realSize = gSynchConsole->Read(buf, size); 
 				System2User(virtualAddr, realSize, buf);
@@ -379,7 +378,7 @@ void ExceptionHandler(ExceptionType which)
 			} else {
 				fileSystem->openf[fileID]->Read(buf, size);
 				currPos = fileSystem->openf[fileID]->GetCurrentPos();
-				realSize = currPos = prevPos;
+				realSize = currPos - prevPos;
 				System2User(virtualAddr, realSize, buf);
 				machine->WriteRegister(2, realSize);
 				delete buf;

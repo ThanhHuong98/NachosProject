@@ -4,8 +4,8 @@ int main()
 {
 	int stdin;
 	char fileName[MAX_LENGTH];
-	PrintString("\n\t\t\t-----Chuong trinh createfile-----\n\n");
-	PrintString("Nhap ten file tu stdin (Open(stdin)): ");
+	//PrintString("\n\t\t\t-----Chuong trinh createfile-----\n\n");
+	PrintString("Nhap ten file: ");
 	//ReadString(fileName, MAX_LENGTH);//Doc ten file nhap tu consile <stdin> save vo fileName
 	stdin = Open("stdin", 2); // Goi ham Open mo file stdin nhap vao ten file, 2<=>stdin
 	if(stdin != -1)//Thanh cong
