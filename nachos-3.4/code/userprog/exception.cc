@@ -129,7 +129,7 @@ void ExceptionHandler(ExceptionType which)
 
 	case AddressErrorException:
 		DEBUG('a', "\n Unaligned reference or one that was beyond the end of the address space");
-		printf("Unaligned reference or one that was beyond the end of the address space\n");
+		printf("\n\n Unaligned reference or one that was beyond the end of the address space");
 		interrupt->Halt();
 		break;
 
@@ -334,76 +334,59 @@ void ExceptionHandler(ExceptionType which)
 		case SC_Read:
 		{
 			/* int Read(char *buffer, int size, OpenFileId id);
-			 * Input: buffer - chuoi tra ve, size - kich thuoc chuoi, id - id file
-			 * Output: so ky tu tra ve - thanh cong, -1 - that ba
-			 * Type = 0 : Read Write
-			 * Type = 1: Read Only
-			 * Type = 2: stdin
-			 * Type = 3: stdout*/
+			 * Input: buffer: return buffer
+			 * Output: -1 if fail; else size */
 			int virtualAddr = machine->ReadRegister(4);
 			int size = machine->ReadRegister(5);
 			int fileID = machine->ReadRegister(6);
-			char* buf;
-			int prevPos, CurrPos;
-			int realSize;
-			// Kiem tra hop le
+			int prevPos, currPos, realSize;
+			char * buf;
+
+			/*fileID nam ngoai ban mo ta file.*/
 			if (fileID < 0 || fileID > 9) {
-				printf("File nam ngoai bang mo ta.\n");
+				printf("Fail to read file.\nFileID is out of openf table.\n");
 				machine->WriteRegister(2, -1);
 				IncreasePC();
 				return;
 			}
+			/* File chua duoc mo.*/
 			if (fileSystem->openf[fileID] == NULL) {
-				printf("File chua duoc mo.\n");
+				printf("Fail to read file.\nFile has not been opened yet.\n");
 				machine->WriteRegister(2, -1);
 				IncreasePC();
 				return;
 			}
+			/* Mo file stdout*/
 			if (fileSystem->openf[fileID]->type == 3) {
-				printf("Khong the doc file.\n");
+				printf("Fail to read file.\nStdout is not readable.\n");
 				machine->WriteRegister(2, -1);
 				IncreasePC();
 				return;
 			}
-			// Lay vi tri con tro hien tai
+			/* Doc file thanh cong*/
+			printf("Doc file thanh cong!\n");
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			buf = User2System(virtualAddr, size);
-			// Sdtin
+
 			
 			if (fileSystem->openf[fileID]->type == 2) {
-				realSize = gSynchConsole->Read(buf, size);
-				System2User(virtualAddr, realSize + 1, buf); 
+				int realSize = gSynchConsole->Read(buf, size); 
+				System2User(virtualAddr, realSize, buf);
+				machine->WriteRegister(2, realSize);
+				delete buf;
+				IncreasePC();
+				return;
+			} else {
+				fileSystem->openf[fileID]->Read(buf, size);
+				currPos = fileSystem->openf[fileID]->GetCurrentPos();
+				realSize = currPos = prevPos;
+				System2User(virtualAddr, realSize, buf);
 				machine->WriteRegister(2, realSize);
 				delete buf;
 				IncreasePC();
 				return;
 			}
-			
-			// Xet truong hop doc file binh thuong thi tra ve so byte thuc su
-			if ((fileSystem->openf[fileID]->Read(buf, size)) > 0)
-			{
-				CurrPos = fileSystem->openf[fileID]->GetCurrentPos();
-				realSize = CurrPos - prevPos;
-				// Copy chuoi tu vung nho System Space sang User Space voi bo dem buffer co do dai la so byte thuc su 
-				System2User(virtualAddr, realSize + 1, buf); 
-				machine->WriteRegister(2, realSize);
-				delete buf;
-				IncreasePC();
-				return;
-			}
-			else
-			{
-				// Truong hop con lai la doc file co noi dung la NULL tra ve -2
-				//printf("\nDoc file rong.");
-				machine->WriteRegister(2, -2);
-				delete buf;
-				IncreasePC();
-				return;
-			}
-			delete buf;
-			IncreasePC();
-			return;
-		}
+		}	
 		case SC_Write:
 		{
 		 //Input: buffer(char*), so ky tu (int), id cua file(OpenFileId)
@@ -419,7 +402,7 @@ void ExceptionHandler(ExceptionType which)
 		 id = machine -> ReadRegister(6); //Lay id cua file
 		
 		 //kiem tra id cua file truyen vao co nam ngoai bang mo ta hay khong
-		 if(id<0 || id>9)
+		 if(id < 0 || id>9)
 		 {
 		   printf("\nKhong the ghi file vi id cua file nam ngoai bang mo ta");
 		   machine -> WriteRegister(2, -1);
@@ -429,7 +412,7 @@ void ExceptionHandler(ExceptionType which)
 		 //Kiem tra file co ton tai khong
 		 if(fileSystem -> openf[id] == NULL)
 		 {
-		   printf("\nFile khong ton tai");
+		   printf("File khong ton tai");
 		   machine -> WriteRegister(2, -1);
 		   IncreasePC();
 		   return;
@@ -528,4 +511,5 @@ void ExceptionHandler(ExceptionType which)
 	//.
 	}
 }
+
 

@@ -23,12 +23,13 @@ int main(int argc, char const *argv[])
     desFile = Open(filename_out, 0);
 
     size = Read(buf, size, srcFile);
+    PrintString(buf);
     Write(buf, size, desFile);
     
     Close(srcFile);
     Close(desFile);
     PrintString("Finish!");
-    //Halt();
+    Halt();
 
     return 0;
 }
