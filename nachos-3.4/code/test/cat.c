@@ -9,7 +9,6 @@ int main()
 	char * buffer;
 	char c; //Ky tu de in ra
 	int i; //Index for loop
-	PrintString("\n-----CAT: HIEN THI ND FILE-----");
 	PrintString("Nhap vao ten file can doc: ");
         ReadString(buffer, 225);
 // Anh da hai em roi

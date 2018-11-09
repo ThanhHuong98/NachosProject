@@ -195,19 +195,19 @@ void ExceptionHandler(ExceptionType which)
 				delete filename;
 				IncreasePC();
 				return;
-				//break;
 			}
 			DEBUG('a', "\n Finish reading filename.");
 
 			if (!fileSystem->Create(filename, 0)) //Tao file bang ham Create cua fileSystem, tra ve ket qua
 			{
 				//Tao file that bai
-				printf("\n Error create file '%s'", filename);
+				DEBUG('a', "\n Error create file '%s'", filename);
+				printf("Error creating file %s", filename);
 				machine->WriteRegister(2, -1);
 				delete filename;
 				IncreasePC();
 				return;
-				//break;
+
 			}
 
 			//Tao file thanh cong
@@ -215,8 +215,8 @@ void ExceptionHandler(ExceptionType which)
 			delete filename;
 			IncreasePC(); //Day thanh ghi lui ve sau de tiep tuc ghi
 			return;
-			//break;
 		}
+		
 		case SC_ReadString:
 		{
 			// Input: Buffer(char*), do dai toi da cua chuoi nhap vao(int)
@@ -232,8 +232,8 @@ void ExceptionHandler(ExceptionType which)
 			delete buffer; 
 			IncreasePC(); // Tang Program Counter 
 			return;
-			//break;
 		}
+		
 		case SC_PrintChar:
 		{
 			// Input: Ki tu(char)
@@ -265,7 +265,6 @@ void ExceptionHandler(ExceptionType which)
 			delete buffer; 
 			IncreasePC(); // Tang Program Counter 
 			return;
-			//break;
 		}
 
 	case SC_Open:
@@ -300,14 +299,13 @@ void ExceptionHandler(ExceptionType which)
 					machine->WriteRegister(2, 1); //tra ve OpenFileID
 				}
 				delete[] filename;
-				//IncreasePC();
-				break;
+				IncreasePC();
+				return;
 			}
 			machine->WriteRegister(2, -1); //Khong mo duoc file return -1
-			
 			delete[] filename;
-			//IncreasePC();
-			break;
+			IncreasePC();
+			return;
 		}
 
 		case SC_Close:
@@ -331,6 +329,7 @@ void ExceptionHandler(ExceptionType which)
 			return;
 			break;
 		}
+		
 		case SC_Read:
 		{
 			/* int Read(char *buffer, int size, OpenFileId id);
@@ -344,6 +343,7 @@ void ExceptionHandler(ExceptionType which)
 
 			/*fileID nam ngoai ban mo ta file.*/
 			if (fileID < 0 || fileID > 9) {
+				DEBUG('a', "Fail to read file.\nFileID is out of openf table.\n");
 				printf("Fail to read file.\nFileID is out of openf table.\n");
 				machine->WriteRegister(2, -1);
 				IncreasePC();
@@ -351,6 +351,7 @@ void ExceptionHandler(ExceptionType which)
 			}
 			/* File chua duoc mo.*/
 			if (fileSystem->openf[fileID] == NULL) {
+				DEBUG('a', "Fail to read file.\nFile has not been opened yet.\n");
 				printf("Fail to read file.\nFile has not been opened yet.\n");
 				machine->WriteRegister(2, -1);
 				IncreasePC();
@@ -358,13 +359,13 @@ void ExceptionHandler(ExceptionType which)
 			}
 			/* Mo file stdout*/
 			if (fileSystem->openf[fileID]->type == 3) {
+				DEBUG('a', "Fail to read file.\nStdout is not readable.\n");
 				printf("Fail to read file.\nStdout is not readable.\n");
 				machine->WriteRegister(2, -1);
 				IncreasePC();
 				return;
 			}
 			/* Doc file thanh cong*/
-			printf("Doc file thanh cong!\n");
 			prevPos = fileSystem->openf[fileID]->GetCurrentPos();
 			buf = User2System(virtualAddr, size);
 
@@ -403,7 +404,8 @@ void ExceptionHandler(ExceptionType which)
 		 //kiem tra id cua file truyen vao co nam ngoai bang mo ta hay khong
 		 if(id < 0 || id>9)
 		 {
-		   printf("\nKhong the ghi file vi id cua file nam ngoai bang mo ta");
+		   DEBUG('a', "Fail to write file.\nFileID is out of openf table.\n");
+		   printf("Fail to write file.\nFileID is out of openf table.\n");
 		   machine -> WriteRegister(2, -1);
 		   IncreasePC();
 		   return;
@@ -411,7 +413,8 @@ void ExceptionHandler(ExceptionType which)
 		 //Kiem tra file co ton tai khong
 		 if(fileSystem -> openf[id] == NULL)
 		 {
-		   printf("File khong ton tai");
+		   DEBUG('a', "Fail to write file.\nFile has not been opened yet.\n");
+		   printf("Fail to write file.\nFile has not been opened yet.\n");
 		   machine -> WriteRegister(2, -1);
 		   IncreasePC();
 		   return;
@@ -419,7 +422,8 @@ void ExceptionHandler(ExceptionType which)
 		 //Xet truong hop ghi file only read (type=1) hoac file stdin (type=2) thi tra ve -1
 		 if(fileSystem->openf[id]->type==1 || fileSystem->openf[id]->type==2)
 		 {
-		   printf("\nKhong the ghi file chi doc hoac stdin");
+		   DEBUG('a', "Fail to write file.\nStdin could not be written.\n");
+		   printf("Fail to write file.\nStdin could not be written.\n");
 		   machine->WriteRegister(2, -1);
 		   IncreasePC();
 		   return;
@@ -467,7 +471,8 @@ void ExceptionHandler(ExceptionType which)
 			// Kiem tra id cua file truyen vao co nam ngoai bang mo ta file khong? Theo de: Bang mo ta file gom 10  file
 			if (id < 0 || id >10)//Nam ngoai bang mo to file
 			{
-				printf("\nKhong the seek vi id nam ngoai bang mo ta file.");
+				DEBUG('a', "Fail to seek file.\nFileID is out of openf table.\n");
+				printf("Fail to seek file.\nFileID is out of openf table.\n");
 				machine->WriteRegister(2, -1);//gan ket qua khong thanh cong vo thanh ghi r2
 				IncreasePC();//Luu d/c cua lenh ke tiep de thuc hien
 				return;
@@ -475,7 +480,8 @@ void ExceptionHandler(ExceptionType which)
 			// Kiem tra file co ton tai khong
 			if (fileSystem->openf[id] == NULL)//OpenFile** openf;
 			{
-				printf("\nKhong the seek vi file nay khong ton tai.");
+				DEBUG('a', "Fail to seek file.\nFile has not been opened yet.\n");
+				printf("Fail to seek file.\nFile has not been opened yet.\n");
 				machine->WriteRegister(2, -1);//gan ket qua khong thanh cong vo thanh ghi r2
 				IncreasePC();//Luu d/c cua lenh ke tiep de thuc hien
 				return;
@@ -484,7 +490,8 @@ void ExceptionHandler(ExceptionType which)
 			//Day la 2 luong file stdin va stout tren bang mo ta file
 			if (id == 0 || id == 1)
 			{
-				printf("\nKhong the seek tren file console.");
+				DEBUG('a', "Fail to seek file. Console IO could not be seeked.\n");
+				printf("Fail to seek file. Console IO could not be seeked.\n");
 				machine->WriteRegister(2, -1);//gan ket qua khong thanh cong vo thanh ghi r2
 				IncreasePC();
 				return;
@@ -493,7 +500,8 @@ void ExceptionHandler(ExceptionType which)
 			pos = (pos == -1) ? fileSystem->openf[id]->Length() : pos;
 			if (pos > fileSystem->openf[id]->Length() || pos < 0) // Kiem tra lai vi tri pos co hop le khong
 			{
-				printf("\nKhong the seek file den vi tri nay.");
+				DEBUG('a', "Fail to seek to this position.\n");
+				printf("Fail to seek to this position.\n");
 				machine->WriteRegister(2, -1);//gan ket qua khong thanh cong vo thanh ghi r2
 			}
 			else
@@ -507,7 +515,6 @@ void ExceptionHandler(ExceptionType which)
 		}
 	}
 	IncreasePC();
-	//.
 	}
 }
 
