@@ -8,7 +8,7 @@ int main()
 	int stdout;
 	char buf[MAX];
 	int length;
-	PrintString("\n-> Nhap du lieu: ");
+	PrintString("\nInput data:  ");
 	stdin = Open("stdin", 2); //mở stdin, type quy định ban đầu là 2
 	if(stdin != -1) //mở thành công
 	{
@@ -19,7 +19,7 @@ int main()
 		if(length !=-1 && length!=-2) //kiểm tra xem đọc file có bị lỗi hoặc đã đến cuối file chưa?
 
 		{
-			PrintString("\n-> Du lieu da nhap: ");
+			PrintString("\nData already inputed: ");
 			stdout = Open("stdout", 3); //mở stdout, type quy định ban đầu là 3
 
 			if(stdout != -1) //mở khong thành công

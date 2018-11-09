@@ -3,15 +3,16 @@
 
 int main()
 {
-	int openFileId;
-	int fileSize;
-	int stdin;
+	int openFileId;//Save idFile
+	int fileSize;//LengthFIle
+	int stdin;//doc tu consoloe
 	char * buffer;
 	char c; //Ky tu de in ra
 	int i; //Index for loop
-	PrintString("Nhap vao ten file can doc: ");
-        ReadString(buffer, 225);
-// Anh da hai em roi
+
+	PrintString("Input FileName to read: ");
+        ReadString(buffer, 225);//Doc chuoi vua nhap luu vao buffer
+
 	openFileId = Open(buffer, 1); // Goi ham Open de mo file do, 1<=> only read
 	if (openFileId != -1) //Kiem tra Open co loi khong
 	{
@@ -21,7 +22,7 @@ int main()
 		// Seek den dau tap tin de tien hanh Read
 		Seek(0, openFileId);
 		
-		PrintString("Noi dung file:\n");
+		PrintString("Content of FileName:\n");
 		for ( ; i < fileSize; i++) // Cho vong lap chay tu 0 - fileSize
 		{
 			Read(&c, 1, openFileId); // Goi ham Read de doc tung ki tu noi dung file
@@ -31,7 +32,7 @@ int main()
 	}
 	else
 	{
-		PrintString(" Mo file khong thanh cong!!\n\n");
+		PrintString("Not Open File to read...\n\n");
 	}
 	return 0;
 }

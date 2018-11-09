@@ -7,7 +7,6 @@ int main(int argc, char const *argv[])
     char filename_in[32];
     char filename_out[32];
     int size = 255;
-    int rSize;
     int stdin;
     int srcFile;
     int desFile;
@@ -22,13 +21,11 @@ int main(int argc, char const *argv[])
     CreateFile(filename_out);
    
     desFile = Open(filename_out, 0);
-
-    rSize = Read(buf, size, srcFile);
-    while ( rSize != 0)
-    {
-        Write(buf, rSize, desFile);
-        rSize = Read(buf, size, srcFile);
-    }
+    PrintString("finish opening file\n");
+    size = Read(buf, size, srcFile);
+    PrintString(buf);
+    Write(buf, size, desFile);
+    
     Close(srcFile);
     Close(desFile);
     PrintString("Finish!");
