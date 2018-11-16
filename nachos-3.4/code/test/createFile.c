@@ -4,8 +4,8 @@ int main()
 {
 	int stdin;
 	char fileName[MAX_LENGTH];
-	//PrintString("\n\t\t\t-----Program createfile-----\n\n");
-	PrintString("Input FileName ");
+	//ConsolePrint("\n\t\t\t-----Program createfile-----\n\n");
+	ConsolePrint("Input FileName ");
 	//ReadString(fileName, MAX_LENGTH);//Doc ten file nhap tu consile <stdin> save vo fileName
 	stdin = Open("stdin", 2); // Goi ham Open mo file stdin nhap vao ten file, 2<=>stdin
 	if(stdin != -1)//Thanh cong
@@ -15,12 +15,12 @@ int main()
 		{
 			if (CreateFile(fileName)==0) // Goi ham CreateFile
 			{
-				PrintString("Create file Success...\n\n");
+				ConsolePrint("Create file Success...\n\n");
 			}
 
 		}
 		else
-			PrintString("FileName is Invalid...!\n\n");
+			ConsolePrint("FileName is Invalid...!\n\n");
 	Close(stdin); // Goi ham Close de dong stdin
 	}
 	return 0;

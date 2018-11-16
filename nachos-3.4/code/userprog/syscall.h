@@ -29,8 +29,8 @@
 #define SC_Close	8
 #define SC_Fork		9
 #define SC_Yield	10
-#define SC_PrintString  11
-#define SC_ReadString   12
+#define SC_ConsolePrint  11
+#define SC_ConsoleRead   12
 #define SC_Seek 	13
 #define SC_PrintChar    14
 
@@ -129,8 +129,8 @@ void Fork(void (*func)());
 void Yield();		
 
 void PrintChar(char c);
-void PrintString(char*buffer);
-void ReadString(char*buffer, int length);
+void ConsolePrint(char*buffer);
+void ConsoleRead(char*buffer, int length);
 int Seek(int pos, OpenFileId id);
 
 #endif /* IN_ASM */

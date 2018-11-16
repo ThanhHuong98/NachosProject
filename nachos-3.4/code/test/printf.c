@@ -1,7 +1,7 @@
 /*#include"syscall.h"
 int main()
 {
-	PrintString("Thanh Huong Nguyen");
+	ConsolePrint("Thanh Huong Nguyen");
 	return 0;
 }*/
 #include"syscall.h"
@@ -13,21 +13,21 @@ int main()
 	int f;
 	int len;
 
-	PrintString("file name = ");
-	ReadString(str,256);
+	ConsolePrint("file name = ");
+	ConsoleRead(str,256);
 
 	f=Open(str,1);
 
 	if(f==-1)
 	{
-		PrintString("Fail..\n");
+		ConsolePrint("Fail..\n");
 	}
 	else
 	{
 		 len = Read(buffer, 256, f);
 		if(len==-1 | len ==-2)
 		{
-			PrintString("Fail..\n");	
+			ConsolePrint("Fail..\n");	
 		}
 		else
 		{

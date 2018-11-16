@@ -131,21 +131,21 @@ Yield:
 	.end Yield
 
 
-	.globl ReadString
-	.ent	ReadString
-ReadString:
-	addiu $2,$0,SC_ReadString
+	.globl ConsoleRead
+	.ent	ConsoleRead
+ConsoleRead:
+	addiu $2,$0,SC_ConsoleRead
 	syscall
 	j	$31
-	.end ReadString
+	.end ConsoleRead
 
-	.globl PrintString
-	.ent	PrintString
-PrintString:
-	addiu $2,$0,SC_PrintString
+	.globl ConsolePrint
+	.ent	ConsolePrint
+ConsolePrint:
+	addiu $2,$0,SC_ConsolePrint
 	syscall
 	j	$31
-	.end PrintString
+	.end ConsolePrint
 
 	.globl PrintChar
 	.ent	PrintChar
